@@ -30,4 +30,5 @@ service UserService {
   rpc getAllUsers(EmptyBody) returns (MultipleUsersResponse) {};
   rpc saveUser(UserRequest) returns (UserResponse) {};
   rpc deleteUser(UserRequest) returns (Message) {};
+  rpc updateUser(UserRequest) returns (Message) {};
 }

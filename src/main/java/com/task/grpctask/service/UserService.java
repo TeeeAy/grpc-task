@@ -4,6 +4,7 @@ import com.task.grpctask.*;
 import com.task.grpctask.entity.User;
 import com.task.grpctask.repository.UserRepository;
 import io.grpc.stub.StreamObserver;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.devh.boot.grpc.server.service.GrpcService;
 
@@ -13,6 +14,7 @@ import java.util.stream.Collectors;
 
 @GrpcService
 @RequiredArgsConstructor
+@Getter
 public class UserService extends UserServiceGrpc.UserServiceImplBase {
 
     private final UserRepository userRepository;
@@ -38,6 +40,27 @@ public class UserService extends UserServiceGrpc.UserServiceImplBase {
                .build();
 
        responseObserver.onNext(multipleUsersResponse);
+
+        responseObserver.onCompleted();
+    }
+
+
+    @Override
+    public void updateUser(UserRequest request,
+                            StreamObserver<Message> responseObserver) {
+
+        User user = userRepository.findById(request.getId()).orElseThrow(
+                () -> new UserNotFoundException("User with given id ws not found"));
+
+        user.setName(request.getName());
+
+        userRepository.save(user);
+
+        Message message = Message.newBuilder()
+                .setText("The user with id " + request.getId() + " was successfully updated")
+                .build();
+
+        responseObserver.onNext(message);
 
         responseObserver.onCompleted();
     }
@@ -85,7 +108,8 @@ public class UserService extends UserServiceGrpc.UserServiceImplBase {
     public void getUser(UserRequest request,
                         StreamObserver<UserResponse> responseObserver) {
 
-        User user = userRepository.findById(request.getId()).orElseThrow(IllegalArgumentException::new);
+        User user = userRepository.findById(request.getId())
+                .orElseThrow(() -> new UserNotFoundException("User with given id ws not found"));
 
         UserResponse userResponse = UserResponse
                 .newBuilder()
