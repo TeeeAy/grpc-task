@@ -34,7 +34,6 @@
             <artifactId>h2</artifactId>
             <scope>runtime</scope>
         </dependency>
-
         <dependency>
             <groupId>net.devh</groupId>
             <artifactId>grpc-spring-boot-starter</artifactId>
@@ -46,13 +45,11 @@
              </exclusion>
              </exclusions>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/net.devh/grpc-server-spring-boot-starter -->
         <dependency>
             <groupId>net.devh</groupId>
             <artifactId>grpc-server-spring-boot-starter</artifactId>
             <version>2.13.1.RELEASE</version>
         </dependency>
-
         <dependency>
             <groupId>io.grpc</groupId>
             <artifactId>grpc-stub</artifactId>
@@ -68,7 +65,6 @@
             <artifactId>jackson-databind</artifactId>
             <version>2.11.2</version>
         </dependency>
-        <!-- JUnit-Test-Framework -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
@@ -79,21 +75,16 @@
             <artifactId>junit-jupiter-engine</artifactId>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>io.grpc</groupId>
             <artifactId>grpc-bom</artifactId>
             <version>${grpc.version}</version>
             <type>pom</type>
         </dependency>
-        <!-- Grpc-Test-Support -->
-
-        <!-- Spring-Test-Support (Optional) -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
-            <!-- Exclude the test engine you don't need -->
             <exclusions>
                 <exclusion>
                     <groupId>org.junit.vintage</groupId>

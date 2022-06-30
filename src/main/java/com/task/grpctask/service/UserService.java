@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import net.devh.boot.grpc.server.service.GrpcService;
 
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @GrpcService
@@ -17,29 +16,33 @@ import java.util.stream.Collectors;
 @Getter
 public class UserService extends UserServiceGrpc.UserServiceImplBase {
 
+    public static final String UPDATED_SUCCESSFULLY_MESSAGE = "The user with id %s was successfully updated";
+    public static final String DELETED_SUCCESSFULLY_MESSAGE = "The user with id %s was successfully deleted";
+    public static final String USER_NOT_FOUND_MESSAGE = "User with given id ws not found";
+
     private final UserRepository userRepository;
 
     @Override
     public void getAllUsers(EmptyBody emptyBody,
                             StreamObserver<MultipleUsersResponse> responseObserver) {
 
-       List<User> users = userRepository.findAll();
+        List<User> users = userRepository.findAll();
 
-       List<UserResponse> userResponses = users
-               .stream()
-               .map(user -> UserResponse
-                       .newBuilder()
-                       .setId(user.getId())
-                       .setName(user.getName())
-                       .build())
-               .collect(Collectors.toList());
+        List<UserResponse> userResponses = users
+                .stream()
+                .map(user -> UserResponse
+                        .newBuilder()
+                        .setId(user.getId())
+                        .setName(user.getName())
+                        .build())
+                .collect(Collectors.toList());
 
-       MultipleUsersResponse multipleUsersResponse = MultipleUsersResponse
-               .newBuilder()
-               .addAllResponses(userResponses)
-               .build();
+        MultipleUsersResponse multipleUsersResponse = MultipleUsersResponse
+                .newBuilder()
+                .addAllResponses(userResponses)
+                .build();
 
-       responseObserver.onNext(multipleUsersResponse);
+        responseObserver.onNext(multipleUsersResponse);
 
         responseObserver.onCompleted();
     }
@@ -47,24 +50,23 @@ public class UserService extends UserServiceGrpc.UserServiceImplBase {
 
     @Override
     public void updateUser(UserRequest request,
-                            StreamObserver<Message> responseObserver) {
+                           StreamObserver<Message> responseObserver) {
 
         User user = userRepository.findById(request.getId()).orElseThrow(
-                () -> new UserNotFoundException("User with given id ws not found"));
+                () -> new UserNotFoundException(USER_NOT_FOUND_MESSAGE));
 
         user.setName(request.getName());
 
         userRepository.save(user);
 
         Message message = Message.newBuilder()
-                .setText("The user with id " + request.getId() + " was successfully updated")
+                .setText(String.format(UPDATED_SUCCESSFULLY_MESSAGE, request.getId()))
                 .build();
 
         responseObserver.onNext(message);
 
         responseObserver.onCompleted();
     }
-
 
 
     @Override
@@ -74,7 +76,7 @@ public class UserService extends UserServiceGrpc.UserServiceImplBase {
         userRepository.deleteById(request.getId());
 
         Message message = Message.newBuilder()
-                .setText("The user with id " + request.getId() + " was successfully deleted")
+                .setText(String.format(DELETED_SUCCESSFULLY_MESSAGE, request.getId()))
                 .build();
 
 
@@ -87,11 +89,10 @@ public class UserService extends UserServiceGrpc.UserServiceImplBase {
                          StreamObserver<UserResponse> responseObserver) {
 
         User user = User.builder()
-                .id(UUID.randomUUID().toString())
                 .name(request.getName())
                 .build();
 
-        userRepository.save(user);
+        user = userRepository.save(user);
 
         UserResponse userResponse = UserResponse
                 .newBuilder()
@@ -109,7 +110,7 @@ public class UserService extends UserServiceGrpc.UserServiceImplBase {
                         StreamObserver<UserResponse> responseObserver) {
 
         User user = userRepository.findById(request.getId())
-                .orElseThrow(() -> new UserNotFoundException("User with given id ws not found"));
+                .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND_MESSAGE));
 
         UserResponse userResponse = UserResponse
                 .newBuilder()
