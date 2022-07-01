@@ -14,14 +14,14 @@ import static org.mockito.Mockito.mock;
 
 @Configuration
 @ImportAutoConfiguration({
-        GrpcServerAutoConfiguration.class, // Create required server beans
-        GrpcServerFactoryAutoConfiguration.class, // Select server implementation
-        GrpcClientAutoConfiguration.class}) // Support @GrpcClient annotation
+        GrpcServerAutoConfiguration.class,
+        GrpcServerFactoryAutoConfiguration.class,
+        GrpcClientAutoConfiguration.class})
 public class UserServiceIntegrationTestConfiguration {
 
     @Bean
     UserRepository userRepository() {
-        return mock(UserRepository.class); // mock(OtherDependency.class);
+        return mock(UserRepository.class);
     }
 
     @Bean
