@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "com.task.grpctask";
+
+message UserRequest{
+  string id = 1;
+  string name = 2;
+}
+
+message UserResponse {
+  string id = 1;
+  string name = 2;
+}
+
+message MultipleUsersResponse{
+  repeated UserResponse responses = 1;
+}
+
+message Message {
+  string text = 1;
+}
+
+message EmptyBody{
+
+}
+
+service UserService {
+  rpc getUser(UserRequest) returns (UserResponse) {};
+  rpc getAllUsers(EmptyBody) returns (MultipleUsersResponse) {};
+  rpc saveUser(UserRequest) returns (UserResponse) {};
+  rpc deleteUser(UserRequest) returns (Message) {};
+  rpc updateUser(UserRequest) returns (Message) {};
+}
